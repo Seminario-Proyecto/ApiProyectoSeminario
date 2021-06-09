@@ -6,18 +6,23 @@ import jsonwebtoken from "jsonwebtoken";
 import { ISimpleUser, IUser } from "../models/Users";
 import isEmpty from "is-empty";
 import path from "path";
+import validator from "validator";
+import { validacion } from "../validation";
+import { IRoles } from "../models/Roles";
 interface Icredentials {
   email: string;
   password: string;
+  username: string;
 }
 class RoutesController {
   constructor() {}
   public async login(request: Request, response: Response) {
     var credentials: Icredentials = request.body;
-    if (credentials.email == undefined) {
-      response
-        .status(300)
-        .json({ serverResponse: "Es necesario el parámetro de email" });
+    if (credentials.email == undefined && credentials.username == undefined) {
+      response.status(300).json({
+        serverResponse:
+          "Es necesario el parámetro de email o nombre de usuario",
+      });
       return;
     }
     if (credentials.password == undefined) {
@@ -33,26 +38,80 @@ class RoutesController {
       var loginUser: IUser = result[0];
       var token: string = jsonwebtoken.sign(
         { id: loginUser._id, email: loginUser.email },
-        "secret"
+        "secret",
+        {
+          expiresIn: 60 * 60 * 24, // expires in 24 hours
+        }
+      );
+      var refreshtoken: string = jsonwebtoken.sign(
+        { id: loginUser._id, email: loginUser.email },
+        "secret123",
+        {
+          expiresIn: 60 * 60 * 24, // expires in 24 hours
+        }
       );
       response.status(200).json({
         serverResponse: {
-          email: loginUser.email,
+          tipo: loginUser.tipo,
           username: loginUser.username,
           token,
+          refreshtoken,
         },
       });
       return;
     }
     response.status(200).json({ serverResponse: "Credenciales incorrectas" });
   }
+
+  //----- refrescacion de token
+  public async refreshToken(request: Request, response: Response) {
+    const refreshToken = request.headers.refresh as string;
+
+    if (!refreshToken) {
+      response
+        .status(400)
+        .json({ serverResponse: "Error no hay refreshtoken" });
+    }
+    var user: BusinessUser = new BusinessUser();
+    var userData: IUser;
+    try {
+      const verifyResult = jsonwebtoken.verify(refreshToken, "secret123");
+      userData = verifyResult as IUser;
+      let result = await user.readUsers(userData.id);
+    } catch (err) {
+      response.status(400).json({ serverResponse: err });
+    }
+    var token: string = jsonwebtoken.sign(
+      { id: userData._id, email: userData.email },
+      "secret",
+      {
+        expiresIn: 60 * 60 * 24, // expires in 24 hours
+      }
+    );
+    response.json({ serverResponse: "Todo Ok", token });
+  }
+
   public async createUsers(request: Request, response: Response) {
     var user: BusinessUser = new BusinessUser();
     var userData = request.body;
-    userData["registerdate"] = new Date();
-    userData["password"] = sha1(userData["password"]);
-    let result = await user.addUsers(userData);
-    response.status(201).json({ serverResponse: result });
+    var USerD: IUser = userData;
+
+    if (
+      validator.isEmail(request.body.email) &&
+      validacion(request.body.username)
+    ) {
+      userData["registerdate"] = new Date();
+      userData["password"] = sha1(userData["password"]);
+
+      let result = await user.addUsers(userData);
+      response.status(201).json({ serverResponse: result });
+      return;
+    } else {
+      return response.status(201).json({
+        serverResponse:
+          /*result*/ "Intruduzca email y nombre de usuario correcto",
+      });
+    }
   }
   public async getUsers(request: Request, response: Response) {
     var user: BusinessUser = new BusinessUser();
@@ -63,8 +122,34 @@ class RoutesController {
     var user: BusinessUser = new BusinessUser();
     let id: string = request.params.id;
     var params = request.body;
+    if (params.email) {
+      if (!validator.isEmail(request.body.email)) {
+        return response.status(201).json({
+          serverResponse:
+            /*result*/ "Intruduzca email y nombre de usuario correcto",
+        });
+      }
+    }
+    if (params.username) {
+      if (!validacion(request.body.username)) {
+        return response.status(201).json({
+          serverResponse:
+            /*result*/ "Intruduzca email y nombre de usuario correcto",
+        });
+      }
+    }
+    if (params.password) {
+      params.password = sha1(params.password);
+    }
+    if (params.tipo) {
+      return response
+        .status(300)
+        .json({ serverResponse: "No se puede modificar el tipo de usuario" });
+    }
+
     var result = await user.updateUsers(id, params);
     response.status(200).json({ serverResponse: result });
+    return;
   }
   public async removeUsers(request: Request, response: Response) {
     var user: BusinessUser = new BusinessUser();
@@ -103,6 +188,12 @@ class RoutesController {
     }
     response.status(201).json({ serverResponse: result });
   }
+  public async getRol(request: Request, response: Response) {
+    let roles: BussinessRoles = new BussinessRoles();
+    let rolesData: Array<IRoles> = await roles.readRoles();
+    response.status(200).json({ serverResponse: rolesData });
+  }
+
   public async removeRol(request: Request, response: Response) {
     let roles: BussinessRoles = new BussinessRoles();
     let idRol: string = request.params.id;
