@@ -210,17 +210,23 @@ class RoutesController {
 
   public async uploadPortrait(request: Request, response: Response) {
     var id: string = request.params.id;
-    if (!id) {
-      response
+    try {
+      if (!id) {
+        response
+          .status(300)
+          .json({ serverResponse: "El id es necesario para subir una foto" });
+        return;
+      }
+      var user: BusinessUser = new BusinessUser();
+      var userToUpdate: IUser = await user.readUsers(id);
+      if (!userToUpdate) {
+        response.status(300).json({ serverResponse: "El usuario no existe!" });
+        return;
+      }
+    } catch (err) {
+      return response
         .status(300)
-        .json({ serverResponse: "El id es necesario para subir una foto" });
-      return;
-    }
-    var user: BusinessUser = new BusinessUser();
-    var userToUpdate: IUser = await user.readUsers(id);
-    if (!userToUpdate) {
-      response.status(300).json({ serverResponse: "El usuario no existe!" });
-      return;
+        .json({ serverResponse: "Hubo algun error intente de nuevo" });
     }
     if (isEmpty(request.files)) {
       response
@@ -253,23 +259,44 @@ class RoutesController {
         });
       });
     };
+
+    var subidas: number = 0;
+    var nosubidas: number = 0;
+    function getFileExtension(filename: string) {
+      return /[.]/.exec(filename) ? /[^.]+$/.exec(filename)[0] : undefined; //verificamos su extensión
+    }
     for (var i = 0; i < key.length; i++) {
       var file: any = files[key[i]];
-      var filehash: string = sha1(new Date().toString()).substr(0, 7);
-      var newname: string = `${filehash}_${file.name}`;
-      var totalpath = `${absolutepath}/${newname}`;
-      await copyDirectory(totalpath, file);
-      userToUpdate.uriavatar = "/api/getportrait/" + id;
-      userToUpdate.pathavatar = totalpath;
-      var userResult: IUser = await userToUpdate.save();
-    }
-    var simpleUser: ISimpleUser = {
-      username: userResult.username,
-      uriavatar: userResult.uriavatar,
-      pathavatar: userResult.pathavatar,
-    };
-    response.status(300).json({ serverResponse: simpleUser });
-    /*file.mv(totalpath, async (err: any, success: any) => {
+      if (
+        getFileExtension(file.name) === "jpg" ||
+        getFileExtension(file.name) === "png" ||
+        getFileExtension(file.name) === "gif" ||
+        getFileExtension(file.name) === "jpeg"
+      ) {
+        var filehash: string = sha1(new Date().toString()).substr(0, 7);
+        var newname: string = `${filehash}_${file.name}`;
+        var totalpath = `${absolutepath}/${newname}`;
+        await copyDirectory(totalpath, file);
+
+        userToUpdate.uriavatar = "/api/getportrait/" + id;
+        userToUpdate.pathavatar = totalpath;
+        try {
+          var userResult: IUser = await userToUpdate.save();
+        } catch (err) {
+          return response.status(300).json({ serverResponse: err });
+        }
+        var simpleUser: ISimpleUser = {
+          username: userResult.username,
+          uriavatar: userResult.uriavatar,
+          pathavatar: userResult.pathavatar,
+        };
+        response.status(300).json({ serverResponse: simpleUser });
+        subidas += 1;
+      } else {
+        nosubidas += 1;
+      }
+
+      /*file.mv(totalpath, async (err: any, success: any) => {
       if (err) {
         response
           .status(300)
@@ -287,21 +314,26 @@ class RoutesController {
       };
       response.status(300).json({ serverResponse: simpleUser });
     });*/
+    }
   }
 
   public async getPortrait(request: Request, response: Response) {
     var id: string = request.params.id;
-    if (!id) {
-      response
-        .status(300)
-        .json({ serverResponse: "Identificador no encontrado" });
-      return;
-    }
-    var user: BusinessUser = new BusinessUser();
-    var userData: IUser = await user.readUsers(id);
-    if (!userData) {
-      response.status(300).json({ serverResponse: "Error " });
-      return;
+    try {
+      if (!id) {
+        response
+          .status(300)
+          .json({ serverResponse: "Identificador no encontrado" });
+        return;
+      }
+      var user: BusinessUser = new BusinessUser();
+      var userData: IUser = await user.readUsers(id);
+      if (!userData) {
+        response.status(300).json({ serverResponse: "Error " });
+        return;
+      }
+    } catch (err) {
+      return response.status(300).json({ serverResponse: "Hubo algun error" });
     }
     if (userData.pathavatar == null) {
       response.status(300).json({ serverResponse: "No existe portrait " });

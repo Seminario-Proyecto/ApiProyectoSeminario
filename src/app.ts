@@ -1,6 +1,7 @@
 import express, { Express } from "express";
 import * as bodyParser from "body-parser";
 import UserModules from "./modules/usermodule/init";
+import ClientModule from "./modules/clientsmodels/init";
 import mongoose, { Mongoose } from "mongoose";
 import FileUpload from "express-fileupload";
 class App {
@@ -12,7 +13,7 @@ class App {
     this.initApp();
   }
   public connectDatabase() {
-    let host: string = "mongodb://172.19.0.3:27017";
+    let host: string = "mongodb://172.19.0.2:27017";
     let database: string = process.env.DATABASE || "seminario";
     let connectionString: string = `${host}/${database}`;
     mongoose.connect(connectionString, {
@@ -37,6 +38,7 @@ class App {
   public initApp() {
     console.log("LOAD MODULES");
     const userModule = new UserModules("/api", this.app);
+    const clientModule = new ClientModule("/client", this.app);
   }
 }
 export default new App();
