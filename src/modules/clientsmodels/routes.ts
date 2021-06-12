@@ -39,6 +39,35 @@ class Routes {
     app
       .route(`${this.routeparent}/clientgetportrait/:id`)
       .get(this.routesController.clientgetportrait);
+
+    //-------AGENDAR REUNION -----------------
+    app
+      .route(`${this.routeparent}/agendar`)
+      .post(this.routesController.createreunion);
+
+    app
+      .route(`${this.routeparent}/agendar`)
+      .get(this.routesController.getreunion);
+
+    app
+      .route(`${this.routeparent}/agendar/pendientes`)
+      .get(this.routesController.getreunionPendientes);
+
+    app
+      .route(`${this.routeparent}/agendar/:id`)
+      .put(this.routesController.updateReunion);
+
+    app
+      .route(`${this.routeparent}/agendar/:id`)
+      .delete(this.routesController.deleteReunion);
+
+    app
+      .route(`${this.routeparent}/addreunion/:id`)
+      .put(this.routesController.addReunion);
+
+    app
+      .route(`${this.routeparent}/removereunion/:id`)
+      .delete(this.routesController.removeReunion);
   }
 }
 

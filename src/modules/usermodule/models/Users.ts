@@ -1,6 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 import RolesModel, { IRoles } from "./Roles";
 import validator from "validator"; //instalamos validator para validar correos y username
+import { IClients } from "../../clientsmodels/models/Clients";
 
 export interface ISimpleUser {
   username?: string;
@@ -21,6 +22,7 @@ export interface IUser extends Document {
   roles: Array<IRoles>;
   uriavatar: string;
   pathavatar: string;
+  clients: Array<IClients>;
 }
 const userSchema: Schema = new Schema({
   username: {
@@ -40,5 +42,6 @@ const userSchema: Schema = new Schema({
   roles: { type: Array },
   uriavatar: { type: String },
   pathavatar: { type: String },
+  clients: { type: Array },
 });
 export default mongoose.model<IUser>("User", userSchema);

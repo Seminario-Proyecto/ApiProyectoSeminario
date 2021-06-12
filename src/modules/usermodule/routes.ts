@@ -54,6 +54,15 @@ class Routes {
     app
       .route(`${this.routeparent}/roles/:id`)
       .delete(jsonwebtokenSecurity, this.routesController.removeRol);
+
+    //--------AÑADIR O ELIMINAR CLIENTES A USUARIOS -----------
+    app
+      .route(`${this.routeparent}/addclient/:id`)
+      .put(this.routesController.addClient);
+
+    app
+      .route(`${this.routeparent}/removeclient/:id`)
+      .put(this.routesController.removeClient);
   }
 }
 export default Routes;

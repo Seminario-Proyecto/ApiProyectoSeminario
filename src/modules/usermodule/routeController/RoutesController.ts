@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import BusinessUser from "../businessController/BusinessUser";
 import BussinessRoles from "../businessController/BussinessRoles";
+import BussinessClient from "../../clientsmodels/businessController/BussinessClients";
 import sha1 from "sha1";
 import jsonwebtoken from "jsonwebtoken";
 import { ISimpleUser, IUser } from "../models/Users";
@@ -9,6 +10,7 @@ import path from "path";
 import validator from "validator";
 import { validacion } from "../validation";
 import { IRoles } from "../models/Roles";
+
 interface Icredentials {
   email: string;
   password: string;
@@ -340,6 +342,46 @@ class RoutesController {
       return;
     }
     response.sendFile(userData.pathavatar);
+  }
+
+  public async addClient(request: Request, response: Response) {
+    let idUs: string = request.params.id;
+    let idCli = request.body.idCli;
+    if (idUs == null && idCli == null) {
+      response.status(300).json({
+        serverResponse: "No se definio id de usuario ni el id del cliente",
+      });
+      return;
+    }
+    try {
+      var user: BusinessUser = new BusinessUser();
+      var result = await user.addClient(idUs, idCli);
+
+      if (result == null) {
+        response
+          .status(300)
+          .json({ serverResponse: "El cliente o usuario no existen" });
+        return;
+      } else {
+        return response.status(200).json({ serverResponse: result });
+      }
+    } catch (err) {
+      return response.status(200).json({ serverResponse: err });
+    }
+  }
+
+  public async removeClient(request: Request, response: Response) {
+    let user: BusinessUser = new BusinessUser();
+    let client: BussinessClient = new BussinessClient();
+    let idUs: string = request.params.id;
+    let idCli: string = request.body.idCli;
+    try {
+      let result = await user.removeClient(idUs, idCli);
+      let result1 = await client.deleteClients(idCli); //ojo preguntar si esta bien, esto hace que si borramos un cliente desde el usuario el cliente totalmente se borra
+      return response.status(200).json({ serverResponse: result, result1 });
+    } catch (err) {
+      return response.status(300).json({ serverResponse: err });
+    }
   }
 }
 export default RoutesController;

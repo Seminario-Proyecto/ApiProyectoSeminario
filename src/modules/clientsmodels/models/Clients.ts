@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
+import { IReunion } from "./Agenda";
 export interface IClients extends Document {
   firtsname: string;
   lastname: string;
@@ -14,7 +15,7 @@ export interface IClients extends Document {
   tipo: string; //Regular o Potencial
   registerdate: Date;
   pedidos?: Array<String>;
-  reunion?: Array<String>;
+  reunion?: Array<IReunion>;
 }
 
 const clientsSchema: Schema = new Schema({

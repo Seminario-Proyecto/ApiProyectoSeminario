@@ -1,5 +1,6 @@
 import UsersModel, { IUser } from "../models/Users";
 import RolesModel, { IRoles } from "../models/Roles";
+import ClientModel, { IClients } from "../../clientsmodels/models/Clients";
 class BusinessUser {
   constructor() {}
   /**
@@ -86,6 +87,39 @@ class BusinessUser {
         return true;
       });
       user.roles = newroles;
+      try {
+        return await user.save();
+      } catch (err) {
+        return err;
+      }
+    }
+    return null;
+  }
+
+  public async addClient(idUs: string, idCl: string) {
+    let user = await UsersModel.findOne({ _id: idUs });
+    if (user != null) {
+      var Client = await ClientModel.findOne({ _id: idCl });
+      if (Client != null) {
+        user.clients.push(Client);
+        return await user.save();
+      }
+      return null;
+    }
+    return null;
+  }
+
+  public async removeClient(idUs: string, idCli: string) {
+    let user = await UsersModel.findOne({ _id: idUs });
+    var Cli = await ClientModel.findOne({ _id: idCli });
+    if (user != null && Cli != null) {
+      let newclient: Array<IClients> = user.clients.filter((item: IClients) => {
+        if (item.lastname == Cli.lastname) {
+          return false;
+        }
+        return true;
+      });
+      user.clients = newclient;
       try {
         return await user.save();
       } catch (err) {
