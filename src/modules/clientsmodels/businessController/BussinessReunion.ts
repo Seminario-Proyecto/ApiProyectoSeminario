@@ -67,10 +67,10 @@ class BussinessReunion {
     }
   }
 
-  public async addReu(idUs: string, idRol: string) {
+  public async addReu(idUs: string, idReu: string) {
     let client = await ClientModel.findOne({ _id: idUs });
     if (client != null) {
-      var reunion = await ReunionModel.findOne({ _id: idRol });
+      var reunion = await ReunionModel.findOne({ _id: idReu });
       if (reunion != null) {
         client.reunion.push(reunion);
         return await client.save();

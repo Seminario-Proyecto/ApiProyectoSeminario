@@ -1,6 +1,9 @@
 import { response } from "express";
 import PedidoModel, { IPedidos } from "../models/pedidos";
 import ProductsModel, { IProducts, ISimpleProducts } from "../models/Products";
+import ClientsModel from "../../clientsmodels/models/Clients";
+import UserModel from "../../usermodule/models/Users";
+import { validarEliminacionPedido } from "../validation";
 
 class BussinessPedidos {
   constructor() {}
@@ -49,6 +52,27 @@ class BussinessPedidos {
     let result = await PedidoModel.update({ _id: id }, { $set: user });
     //console.log("aqui");
     return result;
+  }
+  public async deletePedido(id: string) {
+    try {
+      var pedido: IPedidos = await PedidoModel.findOne({ _id: id });
+      if (pedido != null) {
+        if (validarEliminacionPedido(pedido.registerdate)) {
+          console.log(validarEliminacionPedido(pedido.registerdate));
+          let result = await PedidoModel.remove({ _id: id });
+          return result;
+        } else {
+          return null;
+        }
+      } else {
+        return null;
+        /*response
+          .status(300)
+          .json({ serverResponse: "No existe el pedido" });*/
+      }
+    } catch (err) {
+      return response.status(300).json({ serverResponse: err });
+    }
   }
 
   public async addProduct(idPed: string, IdPro: string, Cant: number) {
@@ -156,6 +180,32 @@ class BussinessPedidos {
       }
     }
     return null;
+  }
+
+  public async addRecibo(idUs: string, idCli: string, idPed: string) {
+    let pedido = await PedidoModel.findOne({ _id: idPed });
+    let cliente = await ClientsModel.findOne({ _id: idCli });
+    let vendedor = await UserModel.findOne({ _id: idUs });
+    if (pedido != null && cliente != null && vendedor != null) {
+      var tot: number = 0;
+      for (var i = 0; i < pedido.products.length; i++) {
+        tot += pedido.products[i].priceTotal;
+      }
+      var newrecibo: any = {
+        nameclient: cliente.firtsname + " " + cliente.lastname,
+        namevendedor: vendedor.username,
+        total: tot,
+        registerdateRecibo: new Date(),
+      };
+      pedido.Recibo = newrecibo;
+      try {
+        return await pedido.save();
+      } catch (err) {
+        return err;
+      }
+    } else {
+      return null;
+    }
   }
 }
 

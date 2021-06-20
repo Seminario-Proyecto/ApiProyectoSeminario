@@ -1,5 +1,5 @@
 import ClientsModel, { IClients } from "../models/Clients";
-
+import PedidosModel, { IPedidos } from "../../pedidosmodule/models/pedidos";
 class BusinessClient {
   constructor() {}
 
@@ -84,6 +84,44 @@ class BusinessClient {
   public async deleteClients(id: string) {
     let result = await ClientsModel.remove({ _id: id });
     return result;
+  }
+
+  public async addPed(idUs: string, idPed: string) {
+    let client = await ClientsModel.findOne({ _id: idUs });
+    if (client != null) {
+      var pedido = await PedidosModel.findOne({ _id: idPed });
+      if (pedido != null) {
+        client.pedidos.push(pedido);
+        return await client.save();
+      }
+      return null;
+    }
+    return null;
+  }
+
+  public async removePed(idCl: string, idPed: string) {
+    let client = await ClientsModel.findOne({ _id: idCl });
+    var Pedido = await PedidosModel.findOne({ _id: idPed });
+
+    if (client != null && Pedido != null) {
+      let newpedidos: Array<IPedidos> = client.pedidos.filter(
+        (item: IPedidos) => {
+          if (item._id.toString() == Pedido._id.toString()) {
+            //si no utilizo el toString() no funciona...esta raro
+            return false;
+          }
+
+          return true;
+        }
+      );
+      client.pedidos = newpedidos;
+      try {
+        return await client.save();
+      } catch (err) {
+        return err;
+      }
+    }
+    return null;
   }
 }
 export default BusinessClient;

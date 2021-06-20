@@ -40,7 +40,7 @@ class RoutesController {
       } else {
         return response.status(201).json({
           serverResponse:
-            /*result*/ "Introduzca valores correctos en el parametro ordenarP",
+            /*result */ "Introduzca valores correctos en el parametro ordenarP",
         });
       }
     } catch (err) {
@@ -125,6 +125,25 @@ class RoutesController {
       }
     } catch (err) {
       return response.status(300).json({ serverResponse: err });
+    }
+  }
+
+  public async deletePedido(request: Request, response: Response) {
+    var pedido: BussinessPedidos = new BussinessPedidos();
+    try {
+      let id: string = request.params.id;
+      let result = await pedido.deletePedido(id);
+      if (result != null) {
+        response.status(200).json({ serverResponse: result });
+        return;
+      } else {
+        return response.status(300).json({
+          serverResponse:
+            "No se puede eliminar porque paso el limite de tiempo",
+        });
+      }
+    } catch (err) {
+      return response.status(200).json({ serverResponse: err });
     }
   }
 

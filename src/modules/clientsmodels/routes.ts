@@ -68,6 +68,15 @@ class Routes {
     app
       .route(`${this.routeparent}/removereunion/:id`)
       .delete(this.routesController.removeReunion);
+
+    //--pedidos--
+    app
+      .route(`${this.routeparent}/addPedido/:id`)
+      .put(this.routesController.addPedidoClients);
+
+    app
+      .route(`${this.routeparent}/removePedido/:id`)
+      .put(this.routesController.removePedidoClients);
   }
 }
 

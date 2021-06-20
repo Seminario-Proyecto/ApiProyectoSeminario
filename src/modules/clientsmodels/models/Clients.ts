@@ -1,5 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { IReunion } from "./Agenda";
+import { IPedidos } from "../../pedidosmodule/models/pedidos";
 export interface IClients extends Document {
   firtsname: string;
   lastname: string;
@@ -14,7 +15,7 @@ export interface IClients extends Document {
   street: string;
   tipo: string; //Regular o Potencial
   registerdate: Date;
-  pedidos?: Array<String>;
+  pedidos?: Array<IPedidos>;
   reunion?: Array<IReunion>;
 }
 

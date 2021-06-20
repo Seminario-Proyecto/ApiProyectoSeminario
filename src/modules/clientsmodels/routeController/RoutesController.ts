@@ -14,6 +14,8 @@ import {
 import isEmpty from "is-empty";
 import path from "path";
 import sha1 from "sha1";
+import BussinessPedidos from "../../pedidosmodule/businessController/BussinessPedidos";
+
 class RoutesController {
   public async createClient(request: Request, response: Response) {
     var client: BussinessClient = new BussinessClient();
@@ -395,6 +397,44 @@ class RoutesController {
       let result = await reunion.removeReu(idCl, idReu);
       let result1 = await reunion.deleteReunion(idReu);
       return response.status(200).json({ serverResponse: result, result1 }); //preguntar si esta bien, esto hace que cada vez que eliminamos una reunion desde el cliente, la reunion totalmente se borra de la BD
+    } catch (err) {
+      return response.status(200).json({ serverResponse: err });
+    }
+  }
+
+  public async addPedidoClients(request: Request, response: Response) {
+    let idCl: string = request.params.id;
+    let idPed = request.body.idPed;
+    if (idCl == null && idPed == null) {
+      response.status(300).json({
+        serverResponse: "No se definio id del cliente ni el id del pedido",
+      });
+      return;
+    }
+    try {
+      var pedidoclient: BussinessClient = new BussinessClient();
+      var result = await pedidoclient.addPed(idCl, idPed);
+      if (result == null) {
+        response
+          .status(300)
+          .json({ serverResponse: "El pedido o cliente no existen" });
+        return;
+      } else {
+        return response.status(200).json({ serverResponse: result });
+      }
+    } catch (err) {
+      return response.status(300).json({ serverResponse: err });
+    }
+  }
+
+  public async removePedidoClients(request: Request, response: Response) {
+    let client: BussinessClient = new BussinessClient();
+    let idCl: string = request.params.id;
+    let idPed: string = request.body.idPed;
+    try {
+      let result = await client.removePed(idCl, idPed);
+
+      return response.status(200).json({ serverResponse: result }); //preguntar si esta bien, esto hace que cada vez que eliminamos una reunion desde el cliente, la reunion totalmente se borra de la BD
     } catch (err) {
       return response.status(200).json({ serverResponse: err });
     }

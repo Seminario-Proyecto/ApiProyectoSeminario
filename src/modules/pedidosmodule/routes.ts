@@ -1,14 +1,17 @@
 import RoutesController from "./routeController/RoutesController";
 import RoutesControllerP from "./routeController/RoutesControllerP";
+import RoutesControllerR from "./routeController/RoutesControllerR";
 import { Express } from "express";
 
 class Routes {
   private routesController: RoutesController;
   private routesControllerP: RoutesControllerP;
+  private routesControllerR: RoutesControllerR;
   private routeparent: string;
   constructor(routeparent: string, app: Express) {
     this.routesController = new RoutesController();
     this.routesControllerP = new RoutesControllerP();
+    this.routesControllerR = new RoutesControllerR();
     this.routeparent = routeparent;
     this.configureRoutes(app);
   }
@@ -25,6 +28,9 @@ class Routes {
     app
       .route(`${this.routeparent}/pedidos/:id`)
       .put(this.routesController.updatePedido);
+    app
+      .route(`${this.routeparent}/pedidos/:id`)
+      .delete(this.routesController.deletePedido);
 
     app
       .route(`${this.routeparent}/addProduct/:id/:cant`)
@@ -60,6 +66,11 @@ class Routes {
     app
       .route(`${this.routeparent}/getimageProduct/:id`)
       .get(this.routesControllerP.getimageProduct);
+
+    ///-------------RUTA DE RECIBOS -------------------
+    app
+      .route(`${this.routeparent}/pedidos/:idUs/:idCli/:idPed`)
+      .put(this.routesControllerR.addReciboPedido);
   }
 }
 
