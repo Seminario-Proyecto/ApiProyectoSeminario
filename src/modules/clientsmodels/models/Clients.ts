@@ -17,6 +17,7 @@ export interface IClients extends Document {
   registerdate: Date;
   pedidos?: Array<IPedidos>;
   reunion?: Array<IReunion>;
+  idUser: string;
 }
 
 const clientsSchema: Schema = new Schema({
@@ -51,5 +52,6 @@ const clientsSchema: Schema = new Schema({
   tipo: { type: String, default: "Potencial" },
   pedidos: { type: Array },
   reunion: { type: Array },
+  idUser: { type: String, required: true },
 });
 export default mongoose.model<IClients>("Client", clientsSchema);

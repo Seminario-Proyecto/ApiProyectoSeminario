@@ -1,4 +1,5 @@
 import RoutesController from "./routeController/RoutesController";
+import jsonwebtokenSecurity from "../usermodule/middleware";
 import { Express } from "express";
 class Routes {
   private routesController: RoutesController;
@@ -16,11 +17,11 @@ class Routes {
 
     app
       .route(`${this.routeparent}/client`)
-      .get(this.routesController.getClient);
+      .get(jsonwebtokenSecurity, this.routesController.getClient);
 
     app
-      .route(`${this.routeparent}/client/tipo/:date`) //buscar tipo de cliente regular o potencial
-      .get(this.routesController.getTypeClient);
+      .route(`${this.routeparent}/client/tipo/:date/:id`) //buscar tipo de cliente regular o potencial
+      .get(jsonwebtokenSecurity, this.routesController.getTypeClient);
 
     app
       .route(`${this.routeparent}/client/:tipo/:name`) //buscar por nombre de cliente regular

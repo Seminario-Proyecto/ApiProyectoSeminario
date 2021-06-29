@@ -18,12 +18,12 @@ class Routes {
       .post(this.routesController.refreshToken);
     app
       .route(`${this.routeparent}/users`)
-      .post(jsonwebtokenSecurity, this.routesController.createUsers);
+      .post(this.routesController.createUsers);
 
+    app.route(`${this.routeparent}/users`).get(this.routesController.getUsers);
     app
-      .route(`${this.routeparent}/users`)
-      .get(jsonwebtokenSecurity, this.routesController.getUsers);
-
+      .route(`${this.routeparent}/users/:id`)
+      .get(this.routesController.getOnlyUsers);
     app
       .route(`${this.routeparent}/users/:id`)
       .put(this.routesController.updateUsers);
@@ -39,18 +39,16 @@ class Routes {
 
     app
       .route(`${this.routeparent}/addrol/:id`)
-      .put(jsonwebtokenSecurity, this.routesController.addRol);
+      .put(this.routesController.addRol);
     app
       .route(`${this.routeparent}/removerol/:id`)
-      .put(jsonwebtokenSecurity, this.routesController.removeUserRol);
+      .put(this.routesController.removeUserRol);
 
     //**--ROLES ROUTES--------------------------------------------------------------------------------------- */
     app
       .route(`${this.routeparent}/roles`)
       .post(jsonwebtokenSecurity, this.routesController.createRol);
-    app
-      .route(`${this.routeparent}/roles`)
-      .get(jsonwebtokenSecurity, this.routesController.getRol);
+    app.route(`${this.routeparent}/roles`).get(this.routesController.getRol);
     app
       .route(`${this.routeparent}/roles/:id`)
       .delete(jsonwebtokenSecurity, this.routesController.removeRol);

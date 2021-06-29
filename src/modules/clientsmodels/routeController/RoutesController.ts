@@ -60,14 +60,17 @@ class RoutesController {
   public async getTypeClient(request: Request, response: Response) {
     let client: BussinessClient = new BussinessClient();
     let date: string = request.params.date;
+    let id: string = request.params.id;
+    console.log("principio " + id + " " + date + " finnnn");
     //console.log(date);
     try {
       let clientData: Array<IClients> | IClients = await client.getTypeClient(
+        id,
         date
       );
       response.status(200).json({ serverResponse: clientData });
     } catch (err) {
-      return response.status(300).json({ serverResponse: err });
+      return response.status(300).json({ serverResponse: "asasasas" });
     }
   }
 

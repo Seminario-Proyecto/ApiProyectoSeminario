@@ -35,6 +35,13 @@ class RoutesController {
     }
     credentials.password = sha1(credentials.password);
     const user: BusinessUser = new BusinessUser();
+    /*if (credentials.username != undefined && credentials.username == '""') {
+      credentials.username = null;
+    }
+    if (credentials.email != undefined && credentials.email == '""') {
+      credentials.email = null;
+    }*/
+    console.log(credentials);
     let result: Array<IUser> = await user.readUsers(credentials, 0, 1);
     if (result.length == 1) {
       var loginUser: IUser = result[0];
@@ -54,6 +61,7 @@ class RoutesController {
       );
       response.status(200).json({
         serverResponse: {
+          _id: loginUser.id,
           tipo: loginUser.tipo,
           username: loginUser.username,
           token,
@@ -120,6 +128,14 @@ class RoutesController {
     const result: Array<IUser> = await user.readUsers();
     response.status(200).json({ serverResponse: result });
   }
+
+  public async getOnlyUsers(request: Request, response: Response) {
+    var user: BusinessUser = new BusinessUser();
+    let id: string = request.params.id;
+    const result: IUser = await user.readOnlyUsers(id);
+    response.status(200).json({ serverResponse: result });
+  }
+
   public async updateUsers(request: Request, response: Response) {
     var user: BusinessUser = new BusinessUser();
     let id: string = request.params.id;
@@ -171,9 +187,9 @@ class RoutesController {
     var user: BusinessUser = new BusinessUser();
     var result = await user.addRol(idUs, idRol);
     if (result == null) {
-      response
-        .status(300)
-        .json({ serverResponse: "El rol o usuario no existen" });
+      response.status(300).json({
+        serverResponse: "El rol o usuario no existen, o ya se asigno ese rol",
+      });
       return;
     }
     response.status(200).json({ serverResponse: result });
