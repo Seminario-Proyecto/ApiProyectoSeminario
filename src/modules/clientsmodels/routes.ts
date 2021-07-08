@@ -17,11 +17,11 @@ class Routes {
 
     app
       .route(`${this.routeparent}/client`)
-      .get(jsonwebtokenSecurity, this.routesController.getClient);
+      .get(this.routesController.getClient);
 
     app
       .route(`${this.routeparent}/client/tipo/:date/:id`) //buscar tipo de cliente regular o potencial
-      .get(jsonwebtokenSecurity, this.routesController.getTypeClient);
+      .get(this.routesController.getTypeClient);
 
     app
       .route(`${this.routeparent}/client/:tipo/:name`) //buscar por nombre de cliente regular

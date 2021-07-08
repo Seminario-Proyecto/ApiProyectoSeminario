@@ -11,6 +11,9 @@ export interface IPedidos extends Document {
   cuentaBancaria?: string;
   total: number;
   Recibo: Array<IRecibo>;
+  idClient: string;
+  FechaEntrega: String;
+  horaEntrega: String;
 }
 const pedidoSchema: Schema = new Schema({
   state: { type: String, required: true, default: "Sin Entregar" },
@@ -21,5 +24,8 @@ const pedidoSchema: Schema = new Schema({
   cuentaBancaria: { type: String },
   total: { type: Number, default: 0 },
   Recibo: { type: Array },
+  idClient: { type: String },
+  FechaEntrega: { type: String },
+  horaEntrega: { type: String },
 });
 export default mongoose.model<IPedidos>("Pedido", pedidoSchema);

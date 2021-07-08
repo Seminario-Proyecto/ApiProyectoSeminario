@@ -50,17 +50,18 @@ class BusinessClient {
   public async getTypeClient(idUs: string, tipo: string) {
     let user = await UsersModel.find({ _id: idUs });
     let client = await ClientsModel.find({ tipo: tipo });
-    console.log(client);
+    console.log("holaa");
     var result: Array<IClients> = client.filter((item: IClients) => {
-      //console.log(item.idUser + " " + idUs);
+      console.log(item.idUser + " " + idUs);
       if (item.idUser.toString() == idUs.toString()) {
         return true;
       }
+
       return false;
     });
     console.log(result);
-    if (client != null) {
-      return client;
+    if (result != null) {
+      return result;
     }
     return null;
   }

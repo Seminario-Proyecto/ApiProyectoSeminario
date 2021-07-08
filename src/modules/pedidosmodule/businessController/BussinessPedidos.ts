@@ -48,6 +48,23 @@ class BussinessPedidos {
     }
   }
 
+  public async getPedidoClient(idC: string) {
+    let pedido = await PedidoModel.find();
+    var result: Array<IPedidos> = pedido.filter((item: IPedidos) => {
+      console.log(item.idClient + " " + idC);
+      if (item.idClient.toString() == idC.toString()) {
+        return true;
+      }
+
+      return false;
+    });
+    console.log(result);
+    if (result != null) {
+      return result;
+    }
+    return null;
+  }
+
   public async updatePedido(id: string, user: any) {
     let result = await PedidoModel.update({ _id: id }, { $set: user });
     //console.log("aqui");

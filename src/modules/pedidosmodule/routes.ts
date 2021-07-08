@@ -26,6 +26,10 @@ class Routes {
       .get(this.routesController.getPedido);
 
     app
+      .route(`${this.routeparent}/pedidos/:idC`)
+      .get(this.routesController.getPedidoClient);
+
+    app
       .route(`${this.routeparent}/pedidos/:id`)
       .put(this.routesController.updatePedido);
     app

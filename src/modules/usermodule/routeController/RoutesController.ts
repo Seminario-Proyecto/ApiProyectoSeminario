@@ -70,7 +70,7 @@ class RoutesController {
       });
       return;
     }
-    response.status(200).json({ serverResponse: "Credenciales incorrectas" });
+    response.status(300).json({ serverResponse: "Credenciales incorrectas" });
   }
 
   //----- refrescacion de token

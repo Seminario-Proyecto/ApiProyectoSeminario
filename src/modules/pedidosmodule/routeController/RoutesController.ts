@@ -14,9 +14,9 @@ class RoutesController {
     try {
       var pedidoData = request.body;
       var PedidoD: IPedidos = pedidoData;
-
+      console.log(PedidoD);
       if (validacionOrdenarP(PedidoD.ordenarP)) {
-        if (PedidoD.methodpay.toLowerCase() === "cuenta bancaria") {
+        if (PedidoD.methodpay.toLowerCase() == "cuenta bancaria") {
           if (PedidoD.cuentaBancaria) {
             pedidoData["cuentaBancaria"] = sha1(pedidoData["cuentaBancaria"]);
             let result = await pedidos.addPedidos(pedidoData);
@@ -44,8 +44,10 @@ class RoutesController {
         });
       }
     } catch (err) {
+      console.log(err);
       return response.status(300).json({
         serverResponse: "Error",
+        err,
       });
     }
   }
@@ -54,6 +56,17 @@ class RoutesController {
     var pedido: BussinessPedidos = new BussinessPedidos();
     const result: Array<IPedidos> = await pedido.readPedido();
     response.status(200).json({ serverResponse: result });
+  }
+
+  public async getPedidoClient(request: Request, response: Response) {
+    var pedido: BussinessPedidos = new BussinessPedidos();
+    var idC: string = request.params.idC;
+    try {
+      let result: Array<IPedidos> = await pedido.getPedidoClient(idC);
+      return response.status(200).json({ serverResponse: result });
+    } catch (err) {
+      return response.status(300).json({ serverResponse: "Ocurrio un error" });
+    }
   }
 
   public async updatePedido(request: Request, response: Response) {
