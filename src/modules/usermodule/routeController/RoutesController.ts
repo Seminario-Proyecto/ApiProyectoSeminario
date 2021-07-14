@@ -201,7 +201,7 @@ class RoutesController {
     if (result == null) {
       response
         .status(300)
-        .json({ serverResponse: "El rol tiene parametros no validos" });
+        .json({ serverResponse: "El rol tiene parametros no validos",result });
       return;
     }
     response.status(201).json({ serverResponse: result });
