@@ -47,7 +47,7 @@ class Routes {
     //**--ROLES ROUTES--------------------------------------------------------------------------------------- */
     app
       .route(`${this.routeparent}/roles`)
-      .post(jsonwebtokenSecurity, this.routesController.createRol);
+      .post(this.routesController.createRol);
     app.route(`${this.routeparent}/roles`).get(this.routesController.getRol);
     app
       .route(`${this.routeparent}/roles/:id`)

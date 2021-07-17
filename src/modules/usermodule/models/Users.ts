@@ -29,7 +29,7 @@ const userSchema: Schema = new Schema({
   username: {
     type: String,
     required: true,
-    unique: true,
+    //unique: true,
   },
   email: {
     type: String,
@@ -39,7 +39,7 @@ const userSchema: Schema = new Schema({
   },
   registerdate: { type: Date, required: true, default: Date.now },
   password: { type: String, required: true },
-  tipo: { type: String, required: true },
+  tipo: { type: String },
   roles: { type: Array },
   uriavatar: { type: String },
   pathavatar: { type: String },

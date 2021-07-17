@@ -22,22 +22,22 @@ class RoutesController {
     var clientData = request.body;
     var ClientD: IClients = clientData;
     try {
-      if (
+      /*if (
         validator.isEmail(ClientD.email) &&
         validacion(ClientD.firtsname) &&
         validacion(ClientD.lastname) &&
         validacionphone(ClientD.telephone) &&
         validacionprob(ClientD.probability)
-      ) {
-        ClientD["registerdate"] = new Date();
-        let result = await client.addClient(ClientD);
-        response.status(201).json({ serverResponse: result });
-        return;
-      } else {
+      ) {*/
+      ClientD["registerdate"] = new Date();
+      let result = await client.addClient(ClientD);
+      response.status(201).json({ serverResponse: result });
+      return;
+      /*} else {
         return response.status(404).json({
           serverResponse: "Intruduzca parametros de registro correctos",
         });
-      }
+      }*/
     } catch (err) {
       console.log(err);
       return response.status(404).json({
@@ -70,7 +70,7 @@ class RoutesController {
       );
       response.status(200).json({ serverResponse: clientData });
     } catch (err) {
-      return response.status(300).json({ serverResponse: "asasasas" });
+      return response.status(300).json({ serverResponse: "Error" });
     }
   }
 
@@ -185,23 +185,19 @@ class RoutesController {
         clientToUpdate.pathphoto = totalpath;
         try {
           var userResult: IClients = await clientToUpdate.save();
-          response.status(201).json({ serverResponse: "Imagen subida" });
-          subidas += 1;
+          //response.status(201).json({ serverResponse: "Imagen subida" });
+          //subidas += 1;
         } catch (err) {
           return response.status(300).json({ serverResponse: err });
         }
       } else {
-        nosubidas += 1;
+        //nosubidas += 1;
+        return response.status(300).json({ serverResponse: "err" });
       }
       //return response.status(300).json({ serverResponse: "err" });
     }
     return response.status(200).json({
-      serverResponse:
-        "Petición finalizada, se subido " +
-        subidas +
-        " imagenes y " +
-        nosubidas +
-        " no se pudo subir porque no eran formato imagen",
+      serverResponse: userResult,
     });
   }
 
