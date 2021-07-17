@@ -199,31 +199,7 @@ class BussinessPedidos {
     return null;
   }
 
-  public async addRecibo(idUs: string, idCli: string, idPed: string) {
-    let pedido = await PedidoModel.findOne({ _id: idPed });
-    let cliente = await ClientsModel.findOne({ _id: idCli });
-    let vendedor = await UserModel.findOne({ _id: idUs });
-    if (pedido != null && cliente != null && vendedor != null) {
-      var tot: number = 0;
-      for (var i = 0; i < pedido.products.length; i++) {
-        tot += pedido.products[i].priceTotal;
-      }
-      var newrecibo: any = {
-        nameclient: cliente.firtsname + " " + cliente.lastname,
-        namevendedor: vendedor.username,
-        total: tot,
-        registerdateRecibo: new Date(),
-      };
-      pedido.Recibo = newrecibo;
-      try {
-        return await pedido.save();
-      } catch (err) {
-        return err;
-      }
-    } else {
-      return null;
-    }
-  }
+
 }
 
 export default BussinessPedidos;
