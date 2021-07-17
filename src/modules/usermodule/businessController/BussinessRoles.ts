@@ -7,7 +7,7 @@ class BussinessRoles {
       let result = await roles.save();
       return result;
     } catch (error) {
-      return null;
+      return error;
     }
   }
   public async readRoles() {

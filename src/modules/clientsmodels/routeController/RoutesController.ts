@@ -70,7 +70,11 @@ class RoutesController {
       );
       response.status(200).json({ serverResponse: clientData });
     } catch (err) {
+<<<<<<< HEAD
       return response.status(300).json({ serverResponse: "Error" });
+=======
+      return response.status(300).json({ serverResponse: err});
+>>>>>>> 87dc4dfbee819ed454ddd1860309f0ce38d8dbf8
     }
   }
 
